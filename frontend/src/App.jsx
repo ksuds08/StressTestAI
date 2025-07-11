@@ -123,7 +123,7 @@ export default function App() {
               </div>
                             <div
                 className="prose prose-invert prose-sm"
-               **dangerouslySetInnerHTML=https://operator.chatgpt.com/c/6870edcad03081909a576cc33a5408cd#cua_citation-%20_html:%20marked.parse(m.content)%20
+               /* dangerouslySetInnerHTML=https://operator.chatgpt.com/c/6870edcad03081909a576cc33a5408cd#cua_citation-%20_html:%20marked.parse(m.content)%20 */
               ></div>
                      ))}
 
