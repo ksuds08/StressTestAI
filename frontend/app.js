@@ -17,6 +17,7 @@ const starters = [
 const convosEl   = document.getElementById('convos');
 const messagesEl = document.getElementById('messages');
 const inputEl    = document.getElementById('input');
+const sendBtn    = document.getElementById('send');
 
 /* ---------- Helpers ---------- */
 function saveConvos(list) { localStorage.setItem(convosKey, JSON.stringify(list)); }
@@ -33,18 +34,19 @@ function renderConvos() {
   });
 }
 
-function addMsg(m) {
+function addMsg(m, isLoading = false) {
   const div = document.createElement('div');
-  div.className = `p-3 rounded-lg shadow ${m.role === 'user' ? 'bg-blue-100 self-end' : 'bg-gray-200'}`;
+  div.className = `p-3 rounded-lg shadow ${m.role === 'user' ? 'bg-blue-100 self-end' : 'bg-gray-200'} ${isLoading ? 'opacity-60 italic' : ''}`;
   div.innerHTML = `
     <div class="flex justify-between items-center">
       <span class="font-semibold capitalize">${m.role}</span>
-      <button class="text-xs text-blue-600" onclick="navigator.clipboard.writeText(\`${m.content.replace(/`/g,'\\`')}\`)">Copy</button>
+      ${isLoading ? '' : `<button class="text-xs text-blue-600" onclick="navigator.clipboard.writeText(\`${m.content.replace(/`/g,'\\`')}\`)">Copy</button>`}
     </div>
     <p class="mt-1 whitespace-pre-wrap">${m.content}</p>
   `;
   messagesEl.appendChild(div);
   messagesEl.scrollTop = messagesEl.scrollHeight;
+  return div; // return so we can replace it later
 }
 
 async function loadConvo(id) {
@@ -57,27 +59,60 @@ async function loadConvo(id) {
   history.forEach(addMsg);
 }
 
-/* ---------- Send (Solver‑only display) ---------- */
+/* ---------- Send (Solver‑only display + Loading) ---------- */
 async function send() {
   const msg = inputEl.value.trim();
   if (!msg || !currentId) return;
+
+  // Disable UI during request
+  inputEl.disabled = true;
+  sendBtn.disabled = true;
+  sendBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
   inputEl.value = '';
   addMsg({ role: 'user', content: msg });
 
-  const res = await fetch(`${API_BASE}/chat`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ userId, conversationId: currentId, message: msg })
-  });
-  const data = await res.json();
+  // Show loading placeholder
+  const loadingDiv = addMsg({ role: 'solver', content: 'Thinking…' }, true);
 
-  // Show only the Solver reply (last message in history)
-  const solverMsg = data.history[data.history.length - 1];
-  addMsg(solverMsg);
+  try {
+    const res = await fetch(`${API_BASE}/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, conversationId: currentId, message: msg })
+    });
+    const data = await res.json();
+
+    // Replace loading placeholder with actual Solver reply
+    const solverMsg = data.history[data.history.length - 1];
+    loadingDiv.replaceWith(createMsgElement(solverMsg));
+  } catch (err) {
+    loadingDiv.replaceWith(createMsgElement({ role: 'system', content: 'Error fetching reply.' }));
+    console.error(err);
+  } finally {
+    // Re‑enable UI
+    inputEl.disabled = false;
+    sendBtn.disabled = false;
+    sendBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+    inputEl.focus();
+  }
+}
+
+function createMsgElement(m) {
+  const div = document.createElement('div');
+  div.className = `p-3 rounded-lg shadow ${m.role === 'user' ? 'bg-blue-100 self-end' : 'bg-gray-200'}`;
+  div.innerHTML = `
+    <div class="flex justify-between items-center">
+      <span class="font-semibold capitalize">${m.role}</span>
+      <button class="text-xs text-blue-600" onclick="navigator.clipboard.writeText(\`${m.content.replace(/`/g,'\\`')}\`)">Copy</button>
+    </div>
+    <p class="mt-1 whitespace-pre-wrap">${m.content}</p>
+  `;
+  return div;
 }
 
 /* ---------- Event Listeners ---------- */
-document.getElementById('send').onclick = send;
+sendBtn.onclick = send;
 inputEl.addEventListener('keydown', e => { if (e.key === 'Enter') send(); });
 
 document.getElementById('newConv').onclick = () => {
