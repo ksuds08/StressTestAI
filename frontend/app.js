@@ -34,7 +34,7 @@ function renderConvos() {
   });
 }
 
-function addMsg(m, isLoading = false) {
+function createMsgElement(m, isLoading = false) {
   const div = document.createElement('div');
   div.className = `p-3 rounded-lg shadow ${m.role === 'user' ? 'bg-blue-100 self-end' : 'bg-gray-200'} ${isLoading ? 'opacity-60 italic' : ''}`;
   div.innerHTML = `
@@ -42,11 +42,16 @@ function addMsg(m, isLoading = false) {
       <span class="font-semibold capitalize">${m.role}</span>
       ${isLoading ? '' : `<button class="text-xs text-blue-600" onclick="navigator.clipboard.writeText(\`${m.content.replace(/`/g,'\\`')}\`)">Copy</button>`}
     </div>
-    <p class="mt-1 whitespace-pre-wrap">${m.content}</p>
+    <div class="mt-1 prose prose-sm">${marked.parse(m.content)}</div>
   `;
+  return div;
+}
+
+function addMsg(m, isLoading = false) {
+  const div = createMsgElement(m, isLoading);
   messagesEl.appendChild(div);
   messagesEl.scrollTop = messagesEl.scrollHeight;
-  return div; // return so we can replace it later
+  return div;
 }
 
 async function loadConvo(id) {
@@ -85,7 +90,8 @@ async function send() {
 
     // Replace loading placeholder with actual Solver reply
     const solverMsg = data.history[data.history.length - 1];
-    loadingDiv.replaceWith(createMsgElement(solverMsg));
+    const newDiv = createMsgElement(solverMsg);
+    loadingDiv.replaceWith(newDiv);
   } catch (err) {
     loadingDiv.replaceWith(createMsgElement({ role: 'system', content: 'Error fetching reply.' }));
     console.error(err);
@@ -96,19 +102,6 @@ async function send() {
     sendBtn.classList.remove('opacity-50', 'cursor-not-allowed');
     inputEl.focus();
   }
-}
-
-function createMsgElement(m) {
-  const div = document.createElement('div');
-  div.className = `p-3 rounded-lg shadow ${m.role === 'user' ? 'bg-blue-100 self-end' : 'bg-gray-200'}`;
-  div.innerHTML = `
-    <div class="flex justify-between items-center">
-      <span class="font-semibold capitalize">${m.role}</span>
-      <button class="text-xs text-blue-600" onclick="navigator.clipboard.writeText(\`${m.content.replace(/`/g,'\\`')}\`)">Copy</button>
-    </div>
-    <p class="mt-1 whitespace-pre-wrap">${m.content}</p>
-  `;
-  return div;
 }
 
 /* ---------- Event Listeners ---------- */
