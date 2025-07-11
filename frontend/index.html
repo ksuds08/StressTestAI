@@ -3,25 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <title>StressTest AI</title>
-  <!-- Tailwind CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Marked (Markdown → HTML) -->
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            bg: '#ffffff',
-            sidebar: '#f5f5f5',
-            accent: '#10a37f',
-            'bubble-ai': '#e8e8e8',
-            'bubble-user': '#d1eaff',
-          },
-        },
-      },
-    };
-  </script>
 </head>
 <body class="h-screen flex bg-bg text-gray-800">
   <!-- Sidebar -->
@@ -52,7 +33,6 @@
       <button id="send" class="px-5 py-2 bg-accent text-white rounded hover:opacity-90">Send</button>
     </div>
   </main>
-
-  <script type="module" src="./src/main.jsx"></script>
 </body>
 </html>
+
