@@ -1,4 +1,4 @@
-const API_BASE = 'https://stresstest-ai.<sub>.workers.dev'; // TODO: replace <sub> with your subdomain
+const API_BASE = 'https://stresstest-ai.promptpulse.workers.dev'; // TODO: replace <sub> with your subdomain
 
 let userId = localStorage.getItem('userId') || 'anon';
 localStorage.setItem('userId', userId);
