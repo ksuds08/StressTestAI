@@ -1,12 +1,13 @@
 export default {
   content: ['./index.html', './src/**/*.{js,jsx}'],
-  darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        bg:      '#0d0d0d',
-        sidebar: '#131313',
-        accent:  '#10a37f',
+        bg:      '#f7f7f8',   // light background
+        sidebar: '#ffffff',   // white sidebar
+        accent:  '#10a37f',   // green accent
+        'bubble-ai':   '#f2f2f2',
+        'bubble-user': '#e0f2ff',
       },
     },
   },
