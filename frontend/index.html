@@ -1,38 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>StressTest AI</title>
-  <!-- Tailwind CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Marked (Markdown → HTML) -->
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-</head>
-<body class="h-screen flex bg-gray-100 text-gray-900">
-  <!-- Sidebar -->
-  <aside class="w-64 bg-gray-900 text-white flex flex-col">
-    <div class="p-4 border-b border-gray-700 text-lg font-semibold">Conversations</div>
-    <button id="newConv" class="m-4 px-4 py-2 bg-green-600 rounded hover:bg-green-700">+ New</button>
-    <ul id="convos" class="flex-1 overflow-y-auto"></ul>
-  </aside>
-
-  <!-- Chat -->
-  <main class="flex-1 flex flex-col">
-    <header class="p-4 border-b bg-white shadow">StressTest AI</header>
-
-    <section id="messages" class="flex-1 overflow-y-auto p-6 space-y-4"></section>
-
-    <!-- Starter Prompts -->
-    <div id="starters" class="p-4 border-t bg-white flex flex-wrap gap-2"></div>
-
-    <!-- Input (hidden until a conversation is selected) -->
-    <div id="inputArea" class="p-4 border-t bg-white flex gap-2 hidden">
-      <input id="input" class="flex-1 border rounded px-3 py-2" placeholder="Type your idea..." />
-      <button id="send" class="px-5 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Send</button>
-    </div>
-  </main>
-
-  <script src="app.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <title>StressTest AI</title>
+  </head>
+  <body class="bg-bg text-gray-200">
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>
 
