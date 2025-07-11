@@ -18,6 +18,7 @@ const convosEl   = document.getElementById('convos');
 const messagesEl = document.getElementById('messages');
 const inputEl    = document.getElementById('input');
 const sendBtn    = document.getElementById('send');
+const inputArea  = document.getElementById('inputArea');  // new
 
 /* ---------- Helpers ---------- */
 function saveConvos(list) { localStorage.setItem(convosKey, JSON.stringify(list)); }
@@ -57,6 +58,7 @@ function addMsg(m, isLoading = false) {
 async function loadConvo(id) {
   currentId = id;
   renderConvos();
+  inputArea.classList.remove('hidden');  // show input area
   messagesEl.innerHTML = '<p class="text-gray-500">Loading...</p>';
   const res = await fetch(`${API_BASE}/chat/history?conversationId=${id}&userId=${userId}`);
   const history = await res.json();
