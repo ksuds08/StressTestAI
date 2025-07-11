@@ -1,39 +1,60 @@
-const API_BASE = 'https://stresstest-ai.promptpulse.workers.dev'; // TODO: replace <sub> with your subdomain
+const API_BASE = 'https://stresstest-ai.promptpulse.workers.dev';
 
+/* ---------- State ---------- */
 let userId = localStorage.getItem('userId') || 'anon';
 localStorage.setItem('userId', userId);
 
 let currentId = null;
-const convosEl = document.getElementById('convos');
+const convosKey = 'convos';
+const starters = [
+  "Generate an idea about AI fitness apps",
+  "I have an idea: Uber for lawn care",
+  "Pivot this idea for SMBs",
+  "Show 3 monetization models"
+];
+
+/* ---------- DOM ---------- */
+const convosEl   = document.getElementById('convos');
 const messagesEl = document.getElementById('messages');
-const inputEl = document.getElementById('input');
+const inputEl    = document.getElementById('input');
+
+/* ---------- Helpers ---------- */
+function saveConvos(list) { localStorage.setItem(convosKey, JSON.stringify(list)); }
+function loadConvos() { return JSON.parse(localStorage.getItem(convosKey) || '[]'); }
 
 function renderConvos() {
   convosEl.innerHTML = '';
-  const convos = JSON.parse(localStorage.getItem('convos') || '[]');
-  convos.forEach(c => {
+  loadConvos().forEach(c => {
     const li = document.createElement('li');
     li.textContent = c.id;
-    li.style.cursor = 'pointer';
+    li.className = `px-4 py-2 cursor-pointer hover:bg-gray-800 ${c.id === currentId ? 'bg-gray-800' : ''}`;
     li.onclick = () => loadConvo(c.id);
     convosEl.appendChild(li);
   });
 }
 
+function addMsg(m) {
+  const div = document.createElement('div');
+  div.className = `p-3 rounded-lg shadow ${m.role === 'user' ? 'bg-blue-100 self-end' : 'bg-gray-200'}`;
+  div.innerHTML = `
+    <div class="flex justify-between items-center">
+      <span class="font-semibold capitalize">${m.role}</span>
+      <button class="text-xs text-blue-600" onclick="navigator.clipboard.writeText(\`${m.content.replace(/`/g,'\\`')}\`)">Copy</button>
+    </div>
+    <p class="mt-1 whitespace-pre-wrap">${m.content}</p>
+  `;
+  messagesEl.appendChild(div);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
 async function loadConvo(id) {
   currentId = id;
+  renderConvos();
+  messagesEl.innerHTML = '<p class="text-gray-500">Loading...</p>';
   const res = await fetch(`${API_BASE}/chat/history?conversationId=${id}&userId=${userId}`);
   const history = await res.json();
   messagesEl.innerHTML = '';
   history.forEach(addMsg);
-}
-
-function addMsg(m) {
-  const div = document.createElement('div');
-  div.className = 'msg';
-  div.innerHTML = `<span class="user">${m.role}:</span> ${m.content}`;
-  messagesEl.appendChild(div);
-  messagesEl.scrollTop = messagesEl.scrollHeight;
 }
 
 async function send() {
@@ -41,6 +62,7 @@ async function send() {
   if (!msg || !currentId) return;
   inputEl.value = '';
   addMsg({ role: 'user', content: msg });
+
   const res = await fetch(`${API_BASE}/chat`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -50,22 +72,29 @@ async function send() {
   data.history.slice(-3).forEach(addMsg);
 }
 
+/* ---------- Event Listeners ---------- */
 document.getElementById('send').onclick = send;
-inputEl.addEventListener('keydown', e => {
-  if (e.key === 'Enter') send();
-});
+inputEl.addEventListener('keydown', e => { if (e.key === 'Enter') send(); });
 
 document.getElementById('newConv').onclick = () => {
   const id = 'conv-' + Date.now();
-  const convos = JSON.parse(localStorage.getItem('convos') || '[]');
-  convos.unshift({ id });
-  localStorage.setItem('convos', JSON.stringify(convos));
+  saveConvos([{ id }, ...loadConvos()]);
   renderConvos();
   loadConvo(id);
 };
 
+/* ---------- Starter Prompts ---------- */
+const startersEl = document.getElementById('starters');
+starters.forEach(text => {
+  const btn = document.createElement('button');
+  btn.textContent = text;
+  btn.className = 'px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 text-sm';
+  btn.onclick = () => { inputEl.value = text; send(); };
+  startersEl.appendChild(btn);
+});
+
+/* ---------- Init ---------- */
 renderConvos();
-const existing = JSON.parse(localStorage.getItem('convos') || '[]');
-if (existing.length) {
-  loadConvo(existing[0].id);
-}
+const existing = loadConvos();
+if (existing.length) loadConvo(existing[0].id);
+
