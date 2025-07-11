@@ -1,30 +1,35 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>StressTest AI</title>
-  <style>
-    body { font-family: sans-serif; margin: 0; padding: 0; display: flex; height: 100vh; }
-    #sidebar { width: 200px; background:#111; color:#fff; padding:10px; overflow-y:auto;}
-    #chat { flex:1; display:flex; flex-direction:column; }
-    #messages { flex:1; overflow-y:auto; padding:10px;}
-    .msg { margin-bottom:10px; }
-    .user { font-weight:bold; }
-    button { cursor:pointer; }
-  </style>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <div id="sidebar">
-    <button id="newConv">+ New Conversation</button>
-    <ul id="convos"></ul>
-  </div>
-  <div id="chat">
-    <div id="messages"></div>
-    <div style="padding:10px;border-top:1px solid #ccc;">
-      <input id="input" style="width:80%;" />
-      <button id="send">Send</button>
+<body class="h-screen flex bg-gray-100 text-gray-900">
+  <!-- Sidebar -->
+  <aside class="w-64 bg-gray-900 text-white flex flex-col">
+    <div class="p-4 border-b border-gray-700 text-lg font-semibold">Conversations</div>
+    <button id="newConv" class="m-4 px-4 py-2 bg-green-600 rounded hover:bg-green-700">+ New</button>
+    <ul id="convos" class="flex-1 overflow-y-auto"></ul>
+  </aside>
+
+  <!-- Chat -->
+  <main class="flex-1 flex flex-col">
+    <header class="p-4 border-b bg-white shadow">StressTest AI</header>
+
+    <section id="messages" class="flex-1 overflow-y-auto p-6 space-y-4"></section>
+
+    <!-- Starter Prompts -->
+    <div id="starters" class="p-4 border-t bg-white flex flex-wrap gap-2"></div>
+
+    <!-- Input -->
+    <div class="p-4 border-t bg-white flex gap-2">
+      <input id="input" class="flex-1 border rounded px-3 py-2" placeholder="Type your idea..." />
+      <button id="send" class="px-5 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Send</button>
     </div>
-  </div>
+  </main>
+
   <script src="app.js"></script>
 </body>
 </html>
+
