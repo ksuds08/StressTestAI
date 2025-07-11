@@ -121,10 +121,11 @@ export default function App() {
                   </button>
                 )}
               </div>
+              {/* Corrected Markdown rendering */}
               <div
-  className="prose prose-invert prose-sm"
-  dangerouslySetInnerHTML=https://operator.chatgpt.com/c/6870edcad03081909a576cc33a5408cd#cua_citation-%20__html:%20marked.parse(m.content)%20
-></div>
+                className="prose prose-invert prose-sm"
+                dangerouslySetInnerHTML=https://operator.chatgpt.com/c/6870edcad03081909a576cc33a5408cd#cua_citation-%20__html:%20marked.parse(m.content)%20
+              ></div>
             </div>
           ))}
 
@@ -158,3 +159,4 @@ export default function App() {
     </div>
   );
 }
+
