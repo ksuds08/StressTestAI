@@ -3,14 +3,13 @@ export default {
   theme: {
     extend: {
       colors: {
-        bg:      '#f7f7f8',   // light background
-        sidebar: '#ffffff',   // white sidebar
-        accent:  '#10a37f',   // green accent
-        'bubble-ai':   '#f2f2f2',
-        'bubble-user': '#e0f2ff',
+        bg: '#ffffff',          // main background
+        sidebar: '#f5f5f5',     // sidebar background
+        accent: '#10a37f',      // buttons / links
+        'bubble-ai': '#e8e8e8', // AI reply bubble
+        'bubble-user': '#d1eaff' // user reply bubble
       },
     },
   },
   plugins: [require('@tailwindcss/typography')],
 };
-
