@@ -57,6 +57,7 @@ async function loadConvo(id) {
   history.forEach(addMsg);
 }
 
+/* ---------- Send (Solver‑only display) ---------- */
 async function send() {
   const msg = inputEl.value.trim();
   if (!msg || !currentId) return;
@@ -69,7 +70,10 @@ async function send() {
     body: JSON.stringify({ userId, conversationId: currentId, message: msg })
   });
   const data = await res.json();
-  data.history.slice(-3).forEach(addMsg);
+
+  // Show only the Solver reply (last message in history)
+  const solverMsg = data.history[data.history.length - 1];
+  addMsg(solverMsg);
 }
 
 /* ---------- Event Listeners ---------- */
