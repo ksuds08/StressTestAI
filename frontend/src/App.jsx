@@ -122,12 +122,11 @@ export default function App() {
                 )}
               </div>
               {/* TODO: Uncomment for Markdown rendering once build stabilizes */}
-              {/* <div
+              <div
                 className="prose prose-invert prose-sm"
                 dangerouslySetInnerHTML=https://operator.chatgpt.com/c/6870edcad03081909a576cc33a5408cd#cua_citation-%20__html:%20marked.parse(m.content)%20
-              ></div> */}
-              <pre className="whitespace-pre-wrap prose-sm">{m.content}</pre>
-            </div>
+              ></div>
+             </div>
           ))}
 
           {loading && (
