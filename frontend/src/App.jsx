@@ -4,7 +4,6 @@ import ReactMarkdown from 'react-markdown';
 const API_BASE = 'https://stresstest-ai.promptpulse.workers.dev';
 
 export default function App() {
-  /* ---------- State ---------- */
   const [convos, setConvos] = useState(() => {
     return JSON.parse(localStorage.getItem('convos') || '[]');
   });
@@ -14,7 +13,6 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const userId = useRef(localStorage.getItem('userId') || 'anon');
 
-  /* ---------- Helpers ---------- */
   const saveConvos = (list) => {
     localStorage.setItem('convos', JSON.stringify(list));
     setConvos(list);
@@ -31,12 +29,10 @@ export default function App() {
     setLoading(false);
   };
 
-  /* ---------- Effects ---------- */
   useEffect(() => {
     loadHistory(activeId);
   }, [activeId]);
 
-  /* ---------- Send ---------- */
   const send = async () => {
     if (!input.trim() || !activeId) return;
     const userMsg = { role: 'user', content: input };
@@ -59,7 +55,6 @@ export default function App() {
     setLoading(false);
   };
 
-  /* ---------- New Conversation ---------- */
   const newConvo = () => {
     const id = 'conv-' + Date.now();
     saveConvos([{ id }, ...convos]);
@@ -67,17 +62,16 @@ export default function App() {
     setMessages([]);
   };
 
-  /* ---------- Render ---------- */
   return (
-    <div className="h-screen flex flex-col md:flex-row">
+    <div className="h-screen flex flex-col md:flex-row bg-bg text-gray-200">
       {/* Sidebar */}
-      <aside className="w-full md:w-64 bg-sidebar text-gray-100 flex flex-col max-h-96 md:max-h-none overflow-y-auto">
-        <div className="p-4 border-b border-gray-700 text-lg font-semibold">
+      <aside className="w-full md:w-64 bg-sidebar text-gray-100 flex flex-col border-r border-gray-800 shadow-inner">
+        <div className="p-4 border-b border-gray-700 text-lg font-semibold tracking-wide">
           Conversations
         </div>
         <button
           onClick={newConvo}
-          className="m-4 px-4 py-2 bg-accent rounded hover:opacity-90 w-full"
+          className="m-4 px-4 py-2 bg-accent text-white rounded hover:opacity-90 transition"
         >
           + New
         </button>
@@ -86,8 +80,10 @@ export default function App() {
             <li
               key={c.id}
               onClick={() => setActiveId(c.id)}
-              className={`px-4 py-2 cursor-pointer hover:bg-gray-800 text-sm truncate ${
-                c.id === activeId ? 'bg-gray-800' : ''
+              className={`px-4 py-2 text-sm truncate rounded cursor-pointer transition ${
+                c.id === activeId
+                  ? 'bg-gray-800 font-semibold'
+                  : 'hover:bg-gray-700'
               }`}
               title={c.id}
             >
@@ -98,8 +94,8 @@ export default function App() {
       </aside>
 
       {/* Chat */}
-      <main className="flex-1 min-h-0 flex flex-col bg-bg text-gray-200">
-        <header className="p-4 border-b border-gray-800 shadow text-lg font-semibold">
+      <main className="flex-1 min-h-0 flex flex-col">
+        <header className="p-4 border-b border-gray-800 text-xl font-bold tracking-wide bg-sidebar">
           StressTest AI
         </header>
 
@@ -107,7 +103,7 @@ export default function App() {
           {messages.map((m, idx) => (
             <div
               key={idx}
-              className={`p-3 rounded-lg shadow ${
+              className={`p-4 rounded-lg shadow-md transition ${
                 m.role === 'user' ? 'bg-bubble-user' : 'bg-bubble-ai'
               }`}
             >
@@ -115,21 +111,20 @@ export default function App() {
                 <span className="font-semibold capitalize">{m.role}</span>
                 {m.role !== 'user' && (
                   <button
-                    className="text-xs text-accent"
+                    className="text-xs text-accent hover:underline"
                     onClick={() => navigator.clipboard.writeText(m.content)}
                   >
                     Copy
                   </button>
                 )}
               </div>
-              <ReactMarkdown className="prose prose-invert prose-sm break-words">
+              <ReactMarkdown className="prose prose-invert prose-base break-words">
                 {m.content}
               </ReactMarkdown>
             </div>
           ))}
-
           {loading && (
-            <div className="p-3 rounded-lg shadow bg-bubble-ai opacity-60 italic">
+            <div className="p-4 rounded-lg shadow bg-bubble-ai opacity-60 italic">
               Thinking…
             </div>
           )}
@@ -137,18 +132,18 @@ export default function App() {
 
         {/* Input */}
         {activeId && (
-          <div className="p-2 sm:p-4 border-t border-gray-800 flex flex-col sm:flex-row gap-2 bg-[#0f0f0f]">
+          <div className="p-4 border-t border-gray-800 flex flex-col sm:flex-row gap-2 bg-[#1a1a1a]">
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && send()}
-              className="w-full flex-1 border rounded px-3 py-2 bg-[#1a1a1a] text-gray-200"
+              className="w-full flex-1 border-none rounded-md px-4 py-3 bg-[#2c2c2c] text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent"
               placeholder="Type your idea..."
             />
             <button
               onClick={send}
               disabled={loading}
-              className="w-full sm:w-auto px-5 py-2 bg-accent text-white rounded hover:opacity-90 disabled:opacity-50"
+              className="w-full sm:w-auto px-5 py-3 bg-accent text-white rounded-md font-medium hover:opacity-90 disabled:opacity-50 transition"
             >
               Send
             </button>
