@@ -45,3 +45,36 @@
 .animate-fade-in {
   animation: fade-in 0.3s ease-out;
 }
+
+/* GPT Markdown rendering improvements */
+.chat-message-content {
+  @apply prose prose-invert text-sm leading-snug max-w-none;
+}
+
+.chat-message-content h1,
+.chat-message-content h2,
+.chat-message-content h3,
+.chat-message-content h4 {
+  @apply mt-4 mb-2 text-white;
+}
+
+.chat-message-content p {
+  @apply mb-2 leading-snug text-gray-100;
+}
+
+.chat-message-content ul,
+.chat-message-content ol {
+  @apply list-inside space-y-1 mb-2;
+}
+
+.chat-message-content li {
+  @apply text-gray-100 leading-snug;
+}
+
+.chat-message-content code {
+  @apply bg-gray-800 text-green-300 px-1 py-0.5 rounded;
+}
+
+.chat-message-content pre {
+  @apply bg-gray-900 p-3 rounded text-sm overflow-x-auto;
+}
