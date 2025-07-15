@@ -162,29 +162,33 @@ export default function App() {
                 )}
               </div>
 
-              {/* Render differently if streaming */}
               {m.role === 'thinking' ? (
                 <pre className="text-sm text-gray-300 whitespace-pre-wrap font-mono">
                   {m.content}
                 </pre>
               ) : (
-                <ReactMarkdown className="prose prose-invert prose-base break-words whitespace-pre-wrap">
-                  {m.content
-                    .replace(/\n{2,}/g, '\n\n')
-                    .replace(/\n/g, '  \n')}
+                <ReactMarkdown
+                  className="prose prose-invert text-sm leading-snug max-w-none"
+                  components={{
+                    p: ({ children }) => <p className="mb-1">{children}</p>,
+                    li: ({ children }) => <li className="mb-1">{children}</li>,
+                    h2: ({ children }) => <h2 className="mt-4 mb-2 text-white text-lg">{children}</h2>,
+                    h3: ({ children }) => <h3 className="mt-3 mb-1 text-white text-base">{children}</h3>,
+                  }}
+                >
+                  {m.content}
                 </ReactMarkdown>
               )}
             </div>
           ))}
 
-          {/* Bouncing Dots Loader */}
           {loading && (
             <div className="p-4 rounded-lg shadow bg-bubble-ai opacity-60 italic flex items-center gap-2">
               <span className="text-sm">Thinking</span>
               <span className="flex gap-1 ml-2">
-                <span className="w-2 h-2 bg-accent rounded-full animate-bounce [animation-delay:-0.3s]"></span>
-                <span className="w-2 h-2 bg-accent rounded-full animate-bounce [animation-delay:-0.15s]"></span>
-                <span className="w-2 h-2 bg-accent rounded-full animate-bounce"></span>
+                <span className="w-2 h-2 bg-accent rounded-full animate-bounce [animation-delay:-0.3s]" />
+                <span className="w-2 h-2 bg-accent rounded-full animate-bounce [animation-delay:-0.15s]" />
+                <span className="w-2 h-2 bg-accent rounded-full animate-bounce" />
               </span>
             </div>
           )}
@@ -192,14 +196,12 @@ export default function App() {
           <div ref={scrollRef} />
         </section>
 
-        {/* Toast Notification */}
         {toastVisible && (
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded shadow-lg transition-opacity duration-300 animate-fade-in">
             Copied to clipboard!
           </div>
         )}
 
-        {/* Input */}
         {activeId && (
           <div className="p-4 border-t border-gray-800 flex flex-col sm:flex-row gap-2 bg-[#1a1a1a]">
             <input
