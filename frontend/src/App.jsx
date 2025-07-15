@@ -49,17 +49,29 @@ export default function App() {
         message: input,
       }),
     });
-    const data = await res.json();
-    const solverMsg = data.history[data.history.length - 1];
-    setMessages((prev) => [...prev, solverMsg]);
-    setLoading(false);
-  };
 
-  const newConvo = () => {
-    const id = 'conv-' + Date.now();
-    saveConvos([{ id }, ...convos]);
-    setActiveId(id);
-    setMessages([]);
+    const data = await res.json();
+    const fullContent = data.history[data.history.length - 1].content;
+    const finalMsg = data.history[data.history.length - 1];
+    let current = '';
+
+    // Simulate typing
+    const interval = setInterval(() => {
+      if (current.length < fullContent.length) {
+        current += fullContent[current.length];
+        setMessages((prev) => {
+          const withoutThinking = prev.filter((msg) => msg.role !== 'thinking');
+          return [...withoutThinking, { role: 'thinking', content: current }];
+        });
+      } else {
+        clearInterval(interval);
+        setMessages((prev) => {
+          const withoutThinking = prev.filter((msg) => msg.role !== 'thinking');
+          return [...withoutThinking, finalMsg];
+        });
+        setLoading(false);
+      }
+    }, 15);
   };
 
   return (
@@ -109,7 +121,7 @@ export default function App() {
             >
               <div className="flex justify-between items-center mb-1">
                 <span className="font-semibold capitalize">{m.role}</span>
-                {m.role !== 'user' && (
+                {m.role !== 'user' && m.role !== 'thinking' && (
                   <button
                     className="text-xs text-accent hover:underline"
                     onClick={() => navigator.clipboard.writeText(m.content)}
@@ -118,14 +130,21 @@ export default function App() {
                   </button>
                 )}
               </div>
-              <ReactMarkdown className="prose prose-invert prose-base break-words">
+              <ReactMarkdown className="prose prose-invert prose-base break-words whitespace-pre-wrap">
                 {m.content}
               </ReactMarkdown>
             </div>
           ))}
+
+          {/* Thinking Dots Loader */}
           {loading && (
-            <div className="p-4 rounded-lg shadow bg-bubble-ai opacity-60 italic">
-              Thinking…
+            <div className="p-4 rounded-lg shadow bg-bubble-ai opacity-60 italic flex items-center gap-2">
+              <span className="text-sm">Thinking</span>
+              <span className="flex gap-1 ml-2">
+                <span className="w-2 h-2 bg-accent rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                <span className="w-2 h-2 bg-accent rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                <span className="w-2 h-2 bg-accent rounded-full animate-bounce"></span>
+              </span>
             </div>
           )}
         </section>
