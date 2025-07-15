@@ -112,21 +112,40 @@ export default function App() {
           + New
         </button>
         <ul className="flex-1 overflow-y-auto">
-          {convos.map((c) => (
-            <li
-              key={c.id}
-              onClick={() => setActiveId(c.id)}
-              className={`px-4 py-2 text-sm truncate rounded cursor-pointer transition ${
-                c.id === activeId
-                  ? 'bg-gray-800 font-semibold'
-                  : 'hover:bg-gray-700'
-              }`}
-              title={c.id}
-            >
-              {c.id}
-            </li>
-          ))}
-        </ul>
+  {convos.map((c) => (
+    <li
+      key={c.id}
+      className={`group px-4 py-2 text-sm truncate rounded cursor-pointer transition flex items-center justify-between gap-2 ${
+        c.id === activeId ? 'bg-gray-800 font-semibold' : 'hover:bg-gray-700'
+      }`}
+      title={c.id}
+    >
+      <span onClick={() => setActiveId(c.id)} className="flex-1 truncate">
+        {c.id}
+      </span>
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          const updated = convos.filter((x) => x.id !== c.id);
+          saveConvos(updated);
+          if (activeId === c.id) {
+            if (updated.length > 0) {
+              setActiveId(updated[0].id);
+              loadHistory(updated[0].id);
+            } else {
+              setActiveId(null);
+              setMessages([]);
+            }
+          }
+        }}
+        className="text-red-400 hover:text-red-200 text-xs px-2"
+        title="Delete"
+      >
+        ✕
+      </button>
+    </li>
+  ))}
+</ul>
       </aside>
 
       {/* Chat */}
