@@ -6,9 +6,9 @@ module.exports = {
       colors: {
         'bg': '#1e1e1e',
         'sidebar': '#151515',
-        'bubble-user': '#2563eb22', // subtle translucent blue
-        'bubble-ai': '#374151',     // Tailwind gray-700
-        'accent': '#10b981',        // teal/emerald
+        'bubble-user': '#2563eb22',
+        'bubble-ai': '#374151',
+        'accent': '#10b981',
       },
     },
   },
