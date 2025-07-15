@@ -2,13 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Global enhancements */
 @layer base {
   html {
     font-family: system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     background-color: #1e1e1e;
-    color: #e5e7eb;
+    color: #e5e7eb; /* Tailwind's gray-200 */
   }
 
   body {
@@ -20,11 +21,27 @@
   }
 }
 
-/* Optional: Hide scrollbars for cleaner look */
+/* Scrollbar hiding (Chrome, Safari, Firefox) */
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
 .scrollbar-none {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Fade-in animation for toast messages */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
 }
