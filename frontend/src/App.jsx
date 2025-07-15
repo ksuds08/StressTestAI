@@ -66,9 +66,16 @@ export default function App() {
     const finalMsg = data.history[data.history.length - 1];
     let current = '';
 
+    if (typeof fullContent !== 'string') {
+      console.error('Response content is not a string:', fullContent);
+      setLoading(false);
+      return;
+    }
+
     const interval = setInterval(() => {
-      if (current.length < fullContent.length) {
-        current += fullContent[current.length];
+      const nextChar = fullContent.charAt(current.length);
+      if (nextChar) {
+        current += nextChar;
         setMessages((prev) => {
           const withoutThinking = prev.filter((msg) => msg.role !== 'thinking');
           return [...withoutThinking, { role: 'thinking', content: current }];
@@ -154,14 +161,23 @@ export default function App() {
                   </button>
                 )}
               </div>
-              <ReactMarkdown className="prose prose-invert prose-base break-words whitespace-pre-wrap">
-                {m.content
-                  .replace(/\n{2,}/g, '\n\n') // Keep paragraphs
-                  .replace(/\n/g, '  \n')}    // Convert single \n to markdown line breaks
-              </ReactMarkdown>
+
+              {/* Render differently if streaming */}
+              {m.role === 'thinking' ? (
+                <pre className="text-sm text-gray-300 whitespace-pre-wrap font-mono">
+                  {m.content}
+                </pre>
+              ) : (
+                <ReactMarkdown className="prose prose-invert prose-base break-words whitespace-pre-wrap">
+                  {m.content
+                    .replace(/\n{2,}/g, '\n\n')
+                    .replace(/\n/g, '  \n')}
+                </ReactMarkdown>
+              )}
             </div>
           ))}
 
+          {/* Bouncing Dots Loader */}
           {loading && (
             <div className="p-4 rounded-lg shadow bg-bubble-ai opacity-60 italic flex items-center gap-2">
               <span className="text-sm">Thinking</span>
