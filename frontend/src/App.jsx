@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
+import { FiCopy, FiCheck } from 'react-icons/fi';
 
 const API_BASE = 'https://stresstest-ai.promptpulse.workers.dev';
 
@@ -11,6 +12,10 @@ export default function App() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [copiedIndex, setCopiedIndex] = useState(null);
+  const [toastVisible, setToastVisible] = useState(false);
+
+  const scrollRef = useRef(null);
   const userId = useRef(localStorage.getItem('userId') || 'anon');
 
   const saveConvos = (list) => {
@@ -32,6 +37,12 @@ export default function App() {
   useEffect(() => {
     loadHistory(activeId);
   }, [activeId]);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
 
   const send = async () => {
     if (!input.trim() || !activeId) return;
@@ -55,7 +66,6 @@ export default function App() {
     const finalMsg = data.history[data.history.length - 1];
     let current = '';
 
-    // Simulate typing
     const interval = setInterval(() => {
       if (current.length < fullContent.length) {
         current += fullContent[current.length];
@@ -130,20 +140,28 @@ export default function App() {
                 <span className="font-semibold capitalize">{m.role}</span>
                 {m.role !== 'user' && m.role !== 'thinking' && (
                   <button
-                    className="text-xs text-accent hover:underline"
-                    onClick={() => navigator.clipboard.writeText(m.content)}
+                    className="text-xs text-accent flex items-center gap-1 hover:underline"
+                    onClick={() => {
+                      navigator.clipboard.writeText(m.content);
+                      setCopiedIndex(idx);
+                      setToastVisible(true);
+                      setTimeout(() => setCopiedIndex(null), 2000);
+                      setTimeout(() => setToastVisible(false), 2000);
+                    }}
                   >
-                    Copy
+                    {copiedIndex === idx ? <FiCheck /> : <FiCopy />}
+                    {copiedIndex === idx ? 'Copied!' : 'Copy'}
                   </button>
                 )}
               </div>
               <ReactMarkdown className="prose prose-invert prose-base break-words whitespace-pre-wrap">
-                {m.content}
+                {m.content
+                  .replace(/\n{2,}/g, '\n\n') // Keep paragraphs
+                  .replace(/\n/g, '  \n')}    // Convert single \n to markdown line breaks
               </ReactMarkdown>
             </div>
           ))}
 
-          {/* Bouncing Dots Thinking Loader */}
           {loading && (
             <div className="p-4 rounded-lg shadow bg-bubble-ai opacity-60 italic flex items-center gap-2">
               <span className="text-sm">Thinking</span>
@@ -154,7 +172,16 @@ export default function App() {
               </span>
             </div>
           )}
+
+          <div ref={scrollRef} />
         </section>
+
+        {/* Toast Notification */}
+        {toastVisible && (
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded shadow-lg transition-opacity duration-300 animate-fade-in">
+            Copied to clipboard!
+          </div>
+        )}
 
         {/* Input */}
         {activeId && (
