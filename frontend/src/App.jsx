@@ -74,6 +74,13 @@ export default function App() {
     }, 15);
   };
 
+  const newConvo = () => {
+    const id = 'conv-' + Date.now();
+    saveConvos([{ id }, ...convos]);
+    setActiveId(id);
+    setMessages([]);
+  };
+
   return (
     <div className="h-screen flex flex-col md:flex-row bg-bg text-gray-200">
       {/* Sidebar */}
@@ -136,7 +143,7 @@ export default function App() {
             </div>
           ))}
 
-          {/* Thinking Dots Loader */}
+          {/* Bouncing Dots Thinking Loader */}
           {loading && (
             <div className="p-4 rounded-lg shadow bg-bubble-ai opacity-60 italic flex items-center gap-2">
               <span className="text-sm">Thinking</span>
