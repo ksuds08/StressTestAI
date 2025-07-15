@@ -1,15 +1,17 @@
-export default {
-  content: ['./index.html', './src/**/*.{js,jsx}'],
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       colors: {
-        bg: '#ffffff',          // main background
-        sidebar: '#f5f5f5',     // sidebar background
-        accent: '#10a37f',      // buttons / links
-        'bubble-ai': '#e8e8e8', // AI reply bubble
-        'bubble-user': '#d1eaff' // user reply bubble
+        'bg': '#1e1e1e',
+        'sidebar': '#151515',
+        'bubble-user': '#2563eb22', // subtle translucent blue
+        'bubble-ai': '#374151',     // Tailwind gray-700
+        'accent': '#10b981',        // teal/emerald
       },
     },
   },
   plugins: [require('@tailwindcss/typography')],
+  darkMode: 'class',
 };
