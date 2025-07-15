@@ -1,4 +1,31 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Global enhancements */
+@layer base {
+  html {
+    font-family: system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #1e1e1e; /* matches bg color from tailwind.config.js */
+    color: #e5e7eb; /* Tailwind's gray-200 */
+  }
+
+  body {
+    margin: 0;
+  }
+
+  * {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Optional: Hide scrollbars for a cleaner look */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+}
