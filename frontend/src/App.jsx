@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { FiCopy, FiCheck, FiPlus, FiMenu, FiTrash2, FiSend } from 'react-icons/fi';
+import { FiCopy, FiCheck, FiPlus, FiMenu, FiTrash2 } from 'react-icons/fi';
 
 const API_BASE = 'https://stresstest-ai.promptpulse.workers.dev';
 
@@ -91,9 +91,9 @@ export default function App() {
   };
 
   const deleteConvo = (id) => {
-    const updated = convos.filter((x) => x.id !== id);
+    const updated = convos.filter((c) => c.id !== id);
     saveConvos(updated);
-    if (activeId === id) {
+    if (id === activeId) {
       if (updated.length > 0) {
         setActiveId(updated[0].id);
         loadHistory(updated[0].id);
@@ -106,7 +106,6 @@ export default function App() {
 
   return (
     <div className="h-screen flex flex-col md:flex-row bg-bg text-gray-200">
-      {/* Mobile Sidebar Toggle */}
       <div className="md:hidden flex items-center justify-between p-4 border-b border-gray-800 bg-sidebar">
         <button onClick={() => setSidebarOpen(!sidebarOpen)} className="text-white">
           <FiMenu size={20} />
@@ -117,39 +116,25 @@ export default function App() {
         </button>
       </div>
 
-      {/* Sidebar */}
       <aside className={`md:w-64 bg-sidebar text-gray-100 flex flex-col border-r border-gray-800 shadow-inner z-10 ${sidebarOpen ? 'block' : 'hidden'} md:block`}>
-        <div className="hidden md:flex justify-between items-center px-4 py-3 border-b border-gray-700">
-          <span className="text-lg font-semibold">Conversations</span>
+        <div className="hidden md:flex justify-between items-center p-4 border-b border-gray-700">
+          <span className="text-lg font-bold">Conversations</span>
           <button onClick={newConvo} className="text-accent">
-            <FiPlus size={18} />
+            <FiPlus size={20} />
           </button>
         </div>
         <ul className="flex-1 overflow-y-auto">
           {convos.map((c) => (
-            <li
-              key={c.id}
-              className={`group px-4 py-2 text-sm truncate rounded cursor-pointer transition flex items-center justify-between gap-2 ${
-                c.id === activeId ? 'bg-gray-800 font-semibold' : 'hover:bg-gray-700'
-              }`}
-              title={c.id}
-            >
-              <span onClick={() => { setActiveId(c.id); setSidebarOpen(false); }} className="flex-1 truncate">
-                {c.id}
-              </span>
-              <button
-                onClick={(e) => { e.stopPropagation(); deleteConvo(c.id); }}
-                className="text-red-400 hover:text-red-200 text-xs px-2"
-                title="Delete"
-              >
-                <FiTrash2 />
+            <li key={c.id} className={`px-4 py-2 text-sm truncate rounded cursor-pointer transition flex justify-between items-center ${c.id === activeId ? 'bg-gray-800 font-semibold' : 'hover:bg-gray-700'}`}>
+              <span onClick={() => { setActiveId(c.id); setSidebarOpen(false); }} className="flex-1 truncate cursor-pointer">{c.id}</span>
+              <button onClick={() => deleteConvo(c.id)} className="text-red-400 hover:text-red-200 px-2" title="Delete">
+                <FiTrash2 size={14} />
               </button>
             </li>
           ))}
         </ul>
       </aside>
 
-      {/* Chat */}
       <main className="flex-1 min-h-0 flex flex-col">
         <header className="hidden md:block p-4 border-b border-gray-800 text-xl font-bold tracking-wide bg-sidebar">
           AI Agent
@@ -157,12 +142,7 @@ export default function App() {
 
         <section className="flex-1 overflow-y-auto px-4 py-6 md:px-6 space-y-4 scrollbar-none">
           {messages.map((m, idx) => (
-            <div
-              key={idx}
-              className={`p-4 rounded-lg shadow-md transition ${
-                m.role === 'user' ? 'bg-bubble-user text-right ml-auto max-w-[85%]' : 'bg-bubble-ai'
-              }`}
-            >
+            <div key={idx} className={`p-4 rounded-lg shadow-md transition max-w-[80%] ${m.role === 'user' ? 'bg-bubble-user ml-auto inline-block' : 'bg-bubble-ai'}`}>
               <div className="flex justify-between items-center mb-1">
                 <span className="font-semibold capitalize">{m.role}</span>
                 {m.role !== 'user' && m.role !== 'thinking' && (
@@ -174,8 +154,7 @@ export default function App() {
                       setToastVisible(true);
                       setTimeout(() => setCopiedIndex(null), 2000);
                       setTimeout(() => setToastVisible(false), 2000);
-                    }}
-                  >
+                    }}>
                     {copiedIndex === idx ? <FiCheck /> : <FiCopy />}
                     {copiedIndex === idx ? 'Copied!' : 'Copy'}
                   </button>
@@ -184,16 +163,12 @@ export default function App() {
               {m.role === 'thinking' ? (
                 <pre className="text-sm text-gray-300 whitespace-pre-wrap font-mono">{m.content}</pre>
               ) : (
-                <ReactMarkdown className="prose prose-invert text-sm leading-snug max-w-none" components={{
-                  p: ({ children }) => <p className="mb-1">{children}</p>,
-                  li: ({ children }) => <li className="mb-1">{children}</li>,
-                  h2: ({ children }) => <h2 className="mt-4 mb-2 text-white text-lg">{children}</h2>,
-                  h3: ({ children }) => <h3 className="mt-3 mb-1 text-white text-base">{children}</h3>
-                }}>{m.content}</ReactMarkdown>
+                <ReactMarkdown className="prose prose-invert prose-base break-words whitespace-pre-wrap">
+                  {m.content.replace(/\n{2,}/g, '\n\n').replace(/\n/g, '  \n')}
+                </ReactMarkdown>
               )}
             </div>
           ))}
-
           {loading && (
             <div className="p-4 rounded-lg shadow bg-bubble-ai opacity-60 italic flex items-center gap-2">
               <span className="text-sm">Thinking</span>
@@ -204,7 +179,6 @@ export default function App() {
               </span>
             </div>
           )}
-
           <div ref={scrollRef} />
         </section>
 
@@ -215,20 +189,20 @@ export default function App() {
         )}
 
         {activeId && (
-          <div className="px-4 py-3 border-t border-gray-800 bg-[#1a1a1a] flex flex-col sm:flex-row justify-center items-center gap-2">
+          <div className="p-4 border-t border-gray-800 flex justify-center items-center gap-2 bg-[#1a1a1a]">
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && send()}
-              className="w-full sm:w-[75%] h-14 border-none rounded-md px-4 py-3 bg-[#2c2c2c] text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent"
+              className="w-[80%] border-none rounded-md px-4 py-4 bg-[#2c2c2c] text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent"
               placeholder="Type your request..."
             />
             <button
               onClick={send}
               disabled={loading}
-              className="h-14 w-14 flex items-center justify-center bg-accent text-white rounded-md hover:opacity-90 disabled:opacity-50"
+              className="p-3 bg-accent text-white rounded-md hover:opacity-90 disabled:opacity-50 transition"
             >
-              <FiSend size={20} />
+              <FiSend size={18} />
             </button>
           </div>
         )}
