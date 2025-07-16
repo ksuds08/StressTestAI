@@ -15,10 +15,10 @@ node_compat = true
 
 [[kv_namespaces]]
 binding = "INBOX_KV"
-id = ""
-preview_id = ""
+id = "6ede4b43b18f47248e97ce13f56a4c26"
+preview_id = "6ede4b43b18f47248e97ce13f56a4c26"
 
 [[kv_namespaces]]
 binding = "TASK_KV"
-id = ""
-preview_id = ""
+id = "83dd0faf543d4fafabd9f3e6627a7cf7"
+preview_id = "83dd0faf543d4fafabd9f3e6627a7cf7"
