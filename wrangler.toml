@@ -2,11 +2,23 @@ name = "stresstest-ai"
 main = "src/index.ts"
 compatibility_date = "2025-07-11"
 
+
 [vars]
 GUMROAD_PRODUCT_ID = ""
 FREE_DAILY_LIMIT = "3"
 
 [[kv_namespaces]]
 binding = "KV"
+id = ""
+preview_id = ""
+node_compat = true
+
+[[kv_namespaces]]
+binding = "INBOX_KV"
+id = ""
+preview_id = ""
+
+[[kv_namespaces]]
+binding = "TASK_KV"
 id = ""
 preview_id = ""
