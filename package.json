@@ -1,0 +1,8 @@
+{
+  "name": "stresstestai-worker",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "mailparser": "^3.10.0"
+  }
+}
