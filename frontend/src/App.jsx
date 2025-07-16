@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { FiCopy, FiCheck, FiPlus, FiMenu, FiSend, FiTrash2 } from 'react-icons/fi';
+import { FiCopy, FiCheck, FiPlus, FiMenu, FiTrash2, FiSend } from 'react-icons/fi';
 
 const API_BASE = 'https://stresstest-ai.promptpulse.workers.dev';
 
@@ -119,8 +119,8 @@ export default function App() {
 
       {/* Sidebar */}
       <aside className={`md:w-64 bg-sidebar text-gray-100 flex flex-col border-r border-gray-800 shadow-inner z-10 ${sidebarOpen ? 'block' : 'hidden'} md:block`}>
-        <div className="hidden md:flex items-center justify-between p-4 border-b border-gray-700">
-          <span className="text-lg font-bold">AI Agent</span>
+        <div className="hidden md:flex justify-between items-center px-4 py-3 border-b border-gray-700">
+          <span className="text-lg font-semibold">Conversations</span>
           <button onClick={newConvo} className="text-accent">
             <FiPlus size={18} />
           </button>
@@ -139,10 +139,10 @@ export default function App() {
               </span>
               <button
                 onClick={(e) => { e.stopPropagation(); deleteConvo(c.id); }}
-                className="text-red-400 hover:text-red-200 text-xs px-1"
+                className="text-red-400 hover:text-red-200 text-xs px-2"
                 title="Delete"
               >
-                <FiTrash2 size={14} />
+                <FiTrash2 />
               </button>
             </li>
           ))}
@@ -151,12 +151,16 @@ export default function App() {
 
       {/* Chat */}
       <main className="flex-1 min-h-0 flex flex-col">
+        <header className="hidden md:block p-4 border-b border-gray-800 text-xl font-bold tracking-wide bg-sidebar">
+          AI Agent
+        </header>
+
         <section className="flex-1 overflow-y-auto px-4 py-6 md:px-6 space-y-4 scrollbar-none">
           {messages.map((m, idx) => (
             <div
               key={idx}
               className={`p-4 rounded-lg shadow-md transition ${
-                m.role === 'user' ? 'bg-bubble-user' : 'bg-bubble-ai'
+                m.role === 'user' ? 'bg-bubble-user text-right ml-auto max-w-[85%]' : 'bg-bubble-ai'
               }`}
             >
               <div className="flex justify-between items-center mb-1">
@@ -180,12 +184,16 @@ export default function App() {
               {m.role === 'thinking' ? (
                 <pre className="text-sm text-gray-300 whitespace-pre-wrap font-mono">{m.content}</pre>
               ) : (
-                <ReactMarkdown className="prose prose-invert text-sm leading-snug max-w-none">
-                  {m.content}
-                </ReactMarkdown>
+                <ReactMarkdown className="prose prose-invert text-sm leading-snug max-w-none" components={{
+                  p: ({ children }) => <p className="mb-1">{children}</p>,
+                  li: ({ children }) => <li className="mb-1">{children}</li>,
+                  h2: ({ children }) => <h2 className="mt-4 mb-2 text-white text-lg">{children}</h2>,
+                  h3: ({ children }) => <h3 className="mt-3 mb-1 text-white text-base">{children}</h3>
+                }}>{m.content}</ReactMarkdown>
               )}
             </div>
           ))}
+
           {loading && (
             <div className="p-4 rounded-lg shadow bg-bubble-ai opacity-60 italic flex items-center gap-2">
               <span className="text-sm">Thinking</span>
@@ -196,6 +204,7 @@ export default function App() {
               </span>
             </div>
           )}
+
           <div ref={scrollRef} />
         </section>
 
@@ -206,23 +215,21 @@ export default function App() {
         )}
 
         {activeId && (
-          <div className="p-4 border-t border-gray-800 flex justify-center bg-[#1a1a1a]">
-            <div className="flex w-full max-w-2xl items-center gap-2">
-              <input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && send()}
-                className="flex-1 border-none rounded-md px-4 py-4 bg-[#2c2c2c] text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent"
-                placeholder="Type your request..."
-              />
-              <button
-                onClick={send}
-                disabled={loading}
-                className="px-4 py-4 bg-accent text-white rounded-md font-medium hover:opacity-90 disabled:opacity-50 transition"
-              >
-                <FiSend />
-              </button>
-            </div>
+          <div className="px-4 py-3 border-t border-gray-800 bg-[#1a1a1a] flex flex-col sm:flex-row justify-center items-center gap-2">
+            <input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && send()}
+              className="w-full sm:w-[75%] h-14 border-none rounded-md px-4 py-3 bg-[#2c2c2c] text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent"
+              placeholder="Type your request..."
+            />
+            <button
+              onClick={send}
+              disabled={loading}
+              className="h-14 w-14 flex items-center justify-center bg-accent text-white rounded-md hover:opacity-90 disabled:opacity-50"
+            >
+              <FiSend size={20} />
+            </button>
           </div>
         )}
       </main>
